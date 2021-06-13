@@ -13,16 +13,16 @@ namespace ReadWave
         static void Main(string[] args)
         {
             bool test = true;
-            bool aprsis = false;
+            bool aprsis = true;
             bool afwe = false;
             bool sound = true;
 
             if (test)
             {
                 AFSK1200ModemTest.Test1();
-               // AFSK1200ModemTest.Test2();
+                AFSK1200ModemTest.Test2();
                 AFSK1200ModemTest.Test3();
-                //AFSK1200ModemTest.Test4();
+                AFSK1200ModemTest.Test4();
             };
             
             
@@ -45,12 +45,12 @@ namespace ReadWave
                 agwe.FrameReceived += new AgwpePort.AgwpePort.AgwpeFrameReceivedEventHandler(agwe_client_FrameReceived);
             };
 
-            //ax25.AFSK1200Modulator mod = null;
-            //if (sound)
-            //{
-            //    mod = new ax25.AFSK1200Modulator(44100);
-            //    mod.txDelayMs = 750;
-            //};
+            ax25.AFSK1200Modulator mod = null;
+            if (sound)
+            {
+                mod = new ax25.AFSK1200Modulator(44100);
+                mod.txDelayMs = 750;
+            };
 
             while ((tcpc != null) && tcpc.Client.Connected)
             {
@@ -90,9 +90,9 @@ namespace ReadWave
                     };                    
                     if (packets.Count > 0)
                     {
-                        //float[] samples;
-                        //mod.GetSamples(packets.ToArray(), out samples);
-                        //WaveStream.PlaySamples(44100, samples, false);
+                        float[] samples;
+                        mod.GetSamples(packets.ToArray(), out samples);
+                        WaveStream.PlaySamples(44100, samples, false);
                     };
                     packets.Clear();
                 };                    
@@ -100,7 +100,7 @@ namespace ReadWave
             };
             Console.ReadLine();
 
-            //tcpc.Close();
+            tcpc.Close();
             if(agwe != null) agwe.Close();
         }
 

@@ -74,7 +74,7 @@ namespace ReadWave
             //ax25.AFSK1200Demodulator dem = new ax25.Afsk1200Demodulator(44100, 1, 6, new Packet2Console("MO>> {0}"));
 
             packet = new ax25.Packet(
-                "APRS", "KJ6BBX", new String[] { "WIDE1-1", "WIDE2-2" },
+                "APRS", "TESTER", new String[] { "WIDE1-1", "WIDE2-2" },
                 ax25.Packet.AX25_CONTROL_APRS, ax25.Packet.AX25_PROTOCOL_NO_LAYER_3,
                 System.Text.Encoding.ASCII.GetBytes(@"=5533.00N\03733.00Ek000/000 /A=00010 AFSK Test")
                 );
