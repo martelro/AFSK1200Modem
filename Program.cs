@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Net.Sockets;
 
 namespace ReadWave
 {
@@ -9,108 +6,47 @@ namespace ReadWave
     {        
         static void Main(string[] args)
         {
-            bool test = true;
-            bool aprsis = false;
-            bool afwe = false;
-            bool sound = true;
+            //AFSK1200ModemTest.Test3();
+            Console.WriteLine("Starting test {0}", 3);
 
-            if (test)
-            {
-                AFSK1200ModemTest.Test1();
-               // AFSK1200ModemTest.Test2();
-                AFSK1200ModemTest.Test3();
-                //AFSK1200ModemTest.Test4();
-            };
-            
-            
-            TcpClient tcpc = null;
-            if (aprsis)
-            {
-                tcpc = new TcpClient();
-                tcpc.Connect("127.0.0.1", 12015);
-                string auth = "user AFSKX25 pass -1 vers ASFKModem 0.1\r\n";
-                tcpc.Client.Send(System.Text.Encoding.ASCII.GetBytes(auth));
-            };
+            ax25.Packet packet;
+            ax25.AFSK1200Modulator mod;
+            float[] samples;
+            //ax25.AFSK1200Demodulator dem;
 
-            AgwpePort.AgwpePort agwe = null;
-            if (afwe)
-            {
-                agwe = new AgwpePort.AgwpePort();
-                agwe.Open((byte)0, "127.0.0.1", 8000);
-                agwe.SendUnproto((byte)0, "TESTER", "APRS", System.Text.Encoding.GetEncoding(1251).GetBytes("=5533.00N\03733.00Ek Testing"));                
-                agwe.StartMonitoring();
-                agwe.FrameReceived += new AgwpePort.AgwpePort.AgwpeFrameReceivedEventHandler(agwe_client_FrameReceived);
-            };
+            mod = new ax25.AFSK1200Modulator(44100);
+            mod.txDelayMs = 500;
+            //dem = new ax25.AFSK1200Demodulator(44100, 1, 0, new TestConsole("T3>> {0}"));
+            //ax25.AFSK1200Demodulator dem = new ax25.Afsk1200Demodulator(44100, 1, 6, new Packet2Console("MO>> {0}"));
 
-            //ax25.AFSK1200Modulator mod = null;
-            //if (sound)
-            //{
-            //    mod = new ax25.AFSK1200Modulator(44100);
-            //    mod.txDelayMs = 750;
-            //};
+            packet = new ax25.Packet(
+                "LAECTC", "KJ6BBX", new String[] { "WIDE1-1", "WIDE2-2" },
+                ax25.Packet.AX25_CONTROL_APRS, ax25.Packet.AX25_PROTOCOL_NO_LAYER_3,
+                System.Text.Encoding.ASCII.GetBytes(@"=5533.00N\03733.00Ek000/000 /A=00010 AFSK Test")
+                );
 
-            while ((tcpc != null) && tcpc.Client.Connected)
-            {
-                string rxText = "";
-                byte[] rxBuffer = new byte[4096];
-                int rxCount = 0;
-                int rxAvailable = tcpc.Client.Available;
-                while (rxAvailable > 0)
-                {
-                    try { rxAvailable -= (rxCount = tcpc.Client.Receive(rxBuffer, 0, rxBuffer.Length > rxAvailable ? rxAvailable : rxBuffer.Length, SocketFlags.None)); }
-                    catch { break; };
-                    if (rxCount > 0) rxText += Encoding.ASCII.GetString(rxBuffer, 0, rxCount);
-                };
-                if (rxText != "")
-                {
-                    string[] lines = rxText.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                    List<ax25.Packet> packets = new List<ax25.Packet>();
-                    foreach (string line in lines)
-                    {
-                        Console.WriteLine("{0}/{1}>> {2}","T",DateTime.UtcNow.ToString("HHmmss"),line);
-                        if (line.IndexOf("#") != 0)
-                        {
-                            string from = line.Substring(0, line.IndexOf(">"));
-                            string pckt = line.Substring(line.IndexOf(":") + 1);
-                            if(agwe != null)
-                                agwe.SendUnproto((byte)0, from, "APRS", System.Text.Encoding.ASCII.GetBytes(pckt));
+            mod.GetSamples(packet, out samples);
+            //dem.AddSamples(samples, samples.Length);
 
-                            if (sound)
-                            {
-                                packets.Add(new ax25.Packet(
-                                    "APRS", from, new String[] { "WIDE1-1", "WIDE2-2" },
-                                    ax25.Packet.AX25_CONTROL_APRS, ax25.Packet.AX25_PROTOCOL_NO_LAYER_3,
-                                    System.Text.Encoding.ASCII.GetBytes(pckt)
-                                    ));
-                            };
-                        };
-                    };                    
-                    if (packets.Count > 0)
-                    {
-                        //float[] samples;
-                        //mod.GetSamples(packets.ToArray(), out samples);
-                        //WaveStream.PlaySamples(44100, samples, false);
-                    };
-                    packets.Clear();
-                };                    
-                System.Threading.Thread.Sleep(10);
-            };
-            //Console.ReadLine();
+            // PLAY
+            WaveStream.PlaySamples(44100, samples, false);
 
-            //tcpc.Close();
-            if(agwe != null) agwe.Close();
+            // SAVE
+            WaveStream.SaveWav16BitMono(@"test3.wav", 44100, samples);
+
+            Console.WriteLine("Test {0} done", 3);
         }
 
-        static void agwe_client_FrameReceived(object sender, AgwpePort.AgwpeEventArgs e)
-        {
-            // AGWPE Config and Information Frames
-            // Read AX25 Unproto (UI) frames and data sent from a remote packet radio station
-            if (e.FrameHeader.DataKind == ((byte)'U'))
-            {
-                AgwpePort.AgwpeMoniUnproto md = (AgwpePort.AgwpeMoniUnproto)e.FrameData;
-                string cmd = md.AX25CallFrom + "WE>>" + md.AX25CallTo.Replace(" Via ", ",").Replace(" ", "") + ":" + System.Text.Encoding.GetEncoding(1251).GetString(md.AX25Data);
-                Console.WriteLine("{0}{1} {2}", "A", DateTime.UtcNow.ToString("HHmmss"), cmd);
-            };
-        }        
+        //static void agwe_client_FrameReceived(object sender, AgwpePort.AgwpeEventArgs e)
+        //{
+        //    // AGWPE Config and Information Frames
+        //    // Read AX25 Unproto (UI) frames and data sent from a remote packet radio station
+        //    if (e.FrameHeader.DataKind == ((byte)'U'))
+        //    {
+        //        AgwpePort.AgwpeMoniUnproto md = (AgwpePort.AgwpeMoniUnproto)e.FrameData;
+        //        string cmd = md.AX25CallFrom + "WE>>" + md.AX25CallTo.Replace(" Via ", ",").Replace(" ", "") + ":" + System.Text.Encoding.GetEncoding(1251).GetString(md.AX25Data);
+        //        Console.WriteLine("{0}{1} {2}", "A", DateTime.UtcNow.ToString("HHmmss"), cmd);
+        //    };
+        //}        
     }  
 }

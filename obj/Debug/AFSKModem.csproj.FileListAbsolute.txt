@@ -9,8 +9,6 @@ D:\Users\Martelro\Source\Repos\martelro\AFSK1200Modem\obj\Debug\AFSKModem.exe
 D:\Users\Martelro\Source\Repos\martelro\AFSK1200Modem\obj\Debug\AFSKModem.pdb
 C:\Users\robma\source\repos\martelro\AFSK1200Modem\bin\Debug\AFSKModem.exe
 C:\Users\robma\source\repos\martelro\AFSK1200Modem\bin\Debug\AFSKModem.pdb
-C:\Users\robma\source\repos\martelro\AFSK1200Modem\bin\Debug\AgwpePort.pdb
-C:\Users\robma\source\repos\martelro\AFSK1200Modem\bin\Debug\AgwpePort.xml
 C:\Users\robma\source\repos\martelro\AFSK1200Modem\obj\Debug\AFSKModem.csproj.AssemblyReference.cache
 C:\Users\robma\source\repos\martelro\AFSK1200Modem\obj\Debug\AFSKModem.csproj.CoreCompileInputs.cache
 C:\Users\robma\source\repos\martelro\AFSK1200Modem\obj\Debug\AFSKModem.csproj.CopyComplete
