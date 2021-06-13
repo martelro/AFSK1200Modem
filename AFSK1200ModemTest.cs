@@ -66,11 +66,11 @@ namespace ReadWave
             ax25.Packet packet;
             ax25.AFSK1200Modulator mod;
             float[] samples;
-            ax25.AFSK1200Demodulator dem;
+            //ax25.AFSK1200Demodulator dem;
 
             mod = new ax25.AFSK1200Modulator(44100);
             mod.txDelayMs = 500;
-            dem = new ax25.AFSK1200Demodulator(44100, 1, 0, new TestConsole("T3>> {0}"));
+            //dem = new ax25.AFSK1200Demodulator(44100, 1, 0, new TestConsole("T3>> {0}"));
             //ax25.AFSK1200Demodulator dem = new ax25.Afsk1200Demodulator(44100, 1, 6, new Packet2Console("MO>> {0}"));
 
             packet = new ax25.Packet(
@@ -80,7 +80,7 @@ namespace ReadWave
                 );
 
             mod.GetSamples(packet, out samples);
-            dem.AddSamples(samples, samples.Length);
+            //dem.AddSamples(samples, samples.Length);
 
             // PLAY
             WaveStream.PlaySamples(44100, samples, false);

@@ -1,7 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
-using System.Collections;
-using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using System.Net.Sockets;
@@ -98,7 +95,7 @@ namespace ReadWave
                 };                    
                 System.Threading.Thread.Sleep(10);
             };
-            Console.ReadLine();
+            //Console.ReadLine();
 
             //tcpc.Close();
             if(agwe != null) agwe.Close();
